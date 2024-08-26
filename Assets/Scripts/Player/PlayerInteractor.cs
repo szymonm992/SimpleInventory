@@ -1,18 +1,31 @@
 using SimpleInventory.Inputs;
 using SimpleInventory.Interaction;
 using UnityEngine;
+using TMPro;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace SimpleInventory.Player
 {
     public class PlayerInteractor : MonoBehaviour
     {
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private LayerMask interactableLayer;
+        private const string INTERACTION_KEY = "E";
 
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private float interactionMaxDistance = 10f;
+        [SerializeField] private LayerMask rayMask;
+        [SerializeField] private LayerMask interactableLayer;
+        [SerializeField] private TextMeshProUGUI interactionText;
+        [SerializeField] private CanvasGroup interactionCanvasGroup;
+        
         private bool previouslyDetectsInteractable = false;
         private bool detectsInteractable = false;
         private IPlayerInputsProvider playerInputsProvider;
         private IInteractable currentInteractable;
+
+        private void Awake()
+        {
+            SetInteractionTextState(false);
+        }
 
         private void Update()
         {
@@ -49,9 +62,9 @@ namespace SimpleInventory.Player
         {
             interactable = null;
 
-            if (Physics.Raycast(detectionRay, out var hitInfo, float.MaxValue, interactableLayer))
+            if (Physics.Raycast(detectionRay, out var hitInfo, interactionMaxDistance, rayMask))
             {
-                return hitInfo.transform.root.TryGetComponent(out interactable);
+                return IsObjectInteractable(hitInfo.collider.gameObject.layer) &&  hitInfo.collider.gameObject.TryGetComponent(out interactable);
             }
 
             return false;
@@ -63,13 +76,24 @@ namespace SimpleInventory.Player
             {
                 previouslyDetectsInteractable = detectsInteractable;
                 detectsInteractable = detectionState;
-                SetInteractionTextState(detectionState, currentInteractable.InteractionName);
+                SetInteractionTextState(detectionState);
             }
         }
 
-        private void SetInteractionTextState(bool state, string interactionActionText = "Interact")
+        private void SetInteractionTextState(bool newTextEnabledState)
         {
+            interactionCanvasGroup.alpha = newTextEnabledState ? 1f : 0f;
+            interactionText.enabled = newTextEnabledState;
 
+            if (newTextEnabledState && currentInteractable != null)
+            {
+                interactionText.text = $"Press '{INTERACTION_KEY}' to {currentInteractable.InteractionName}";
+            }
+        }
+
+        private bool IsObjectInteractable(int layer)
+        {
+            return interactableLayer == (interactableLayer | (1 << layer));
         }
     }
 }
