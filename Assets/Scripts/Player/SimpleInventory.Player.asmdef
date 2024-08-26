@@ -2,7 +2,8 @@
     "name": "SimpleInventory.Player",
     "rootNamespace": "SimpleInventory.Player",
     "references": [
-        "GUID:674f537b55c04a64f8607e44f8a2b454"
+        "GUID:674f537b55c04a64f8607e44f8a2b454",
+        "GUID:3f724e61246851e4da0d01523376f791"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
