@@ -33,8 +33,8 @@ namespace SimpleInventory.Player
                 return;
             }
 
-            ApplyRotation(FetchRotation());
-            ApplyMovement(GetWorldInputForce());
+            ProcessRotation(FetchRotation());
+            ProcessMovement(GetInputVector());
         }
 
         private void FixedUpdate()
@@ -50,7 +50,7 @@ namespace SimpleInventory.Player
                 return;
             }
 
-            movementInput = Vector3.right * playerInputsProvider.Movement.x + Vector3.forward * playerInputsProvider.Movement.y;
+            movementInput = (Vector3.right * playerInputsProvider.Movement.x) + (Vector3.forward * playerInputsProvider.Movement.y);
         }
 
         private void Awake()
@@ -66,7 +66,7 @@ namespace SimpleInventory.Player
               transform.rotation, groundMask, QueryTriggerInteraction.Ignore);
         }
 
-        private void ApplyMovement(Vector3 movementDirection)
+        private void ProcessMovement(Vector3 movementDirection)
         {
             var defaultVelocity = movementDirection * movementSpeed;
             var fixedVelocity = Vector3.MoveTowards(rigidbody.velocity, defaultVelocity, Time.deltaTime * acceleration);
@@ -74,7 +74,7 @@ namespace SimpleInventory.Player
             rigidbody.velocity = new Vector3(fixedVelocity.x, rigidbody.velocity.y, fixedVelocity.z);
         }
 
-        private Vector3 GetWorldInputForce()
+        private Vector3 GetInputVector()
         {
             var worldInputDirection = Vector3.ClampMagnitude(transform.rotation * movementInput, 1f);
 
@@ -99,7 +99,7 @@ namespace SimpleInventory.Player
             return rotation;
         }
 
-        private void ApplyRotation(Vector2 rotation)
+        private void ProcessRotation(Vector2 rotation)
         {
             viewAngles += rotation;
             viewAngles.x = Mathf.Clamp(Mathf.DeltaAngle(0, viewAngles.x), minRotationX, maxRotationX);

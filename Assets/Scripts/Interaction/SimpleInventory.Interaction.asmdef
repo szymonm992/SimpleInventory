@@ -1,6 +1,6 @@
 {
-    "name": "SimpleInventory.Inventory",
-    "rootNamespace": "SimpleInventory.Inventory",
+    "name": "SimpleInventory.Interaction",
+    "rootNamespace": "SimpleInventory.Interaction",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
