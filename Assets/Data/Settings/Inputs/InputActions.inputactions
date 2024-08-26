@@ -6,15 +6,6 @@
             "id": "bf288562-abe9-4b02-a244-1487c320b977",
             "actions": [
                 {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "9983bc25-b373-4ea3-ab08-d48803748b5e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "de5dbce0-5081-4423-b6dd-756b13240cbc",
@@ -43,39 +34,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "9032773e-bafa-45fd-b65c-65f305d732ec",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ef362144-c7ba-4516-b383-ce46c70c39b4",
-                    "path": "<Keyboard>/backspace",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5975326a-4b0a-4567-8164-d5154e366945",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "WSAD",
                     "id": "e675cedd-da90-4f93-926d-bac41f19a81d",

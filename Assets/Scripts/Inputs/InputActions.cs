@@ -30,15 +30,6 @@ namespace SimpleInventory.Inputs
             ""id"": ""bf288562-abe9-4b02-a244-1487c320b977"",
             ""actions"": [
                 {
-                    ""name"": ""Jump"",
-                    ""type"": ""Button"",
-                    ""id"": ""9983bc25-b373-4ea3-ab08-d48803748b5e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""de5dbce0-5081-4423-b6dd-756b13240cbc"",
@@ -67,39 +58,6 @@ namespace SimpleInventory.Inputs
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9032773e-bafa-45fd-b65c-65f305d732ec"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ef362144-c7ba-4516-b383-ce46c70c39b4"",
-                    ""path"": ""<Keyboard>/backspace"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5975326a-4b0a-4567-8164-d5154e366945"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": ""WSAD"",
                     ""id"": ""e675cedd-da90-4f93-926d-bac41f19a81d"",
@@ -206,7 +164,6 @@ namespace SimpleInventory.Inputs
 }");
             // Default
             m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
-            m_Default_Jump = m_Default.FindAction("Jump", throwIfNotFound: true);
             m_Default_Interact = m_Default.FindAction("Interact", throwIfNotFound: true);
             m_Default_Movement = m_Default.FindAction("Movement", throwIfNotFound: true);
             m_Default_Look = m_Default.FindAction("Look", throwIfNotFound: true);
@@ -271,7 +228,6 @@ namespace SimpleInventory.Inputs
         // Default
         private readonly InputActionMap m_Default;
         private List<IDefaultActions> m_DefaultActionsCallbackInterfaces = new List<IDefaultActions>();
-        private readonly InputAction m_Default_Jump;
         private readonly InputAction m_Default_Interact;
         private readonly InputAction m_Default_Movement;
         private readonly InputAction m_Default_Look;
@@ -279,7 +235,6 @@ namespace SimpleInventory.Inputs
         {
             private @InputActions m_Wrapper;
             public DefaultActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Jump => m_Wrapper.m_Default_Jump;
             public InputAction @Interact => m_Wrapper.m_Default_Interact;
             public InputAction @Movement => m_Wrapper.m_Default_Movement;
             public InputAction @Look => m_Wrapper.m_Default_Look;
@@ -292,9 +247,6 @@ namespace SimpleInventory.Inputs
             {
                 if (instance == null || m_Wrapper.m_DefaultActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_DefaultActionsCallbackInterfaces.Add(instance);
-                @Jump.started += instance.OnJump;
-                @Jump.performed += instance.OnJump;
-                @Jump.canceled += instance.OnJump;
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
@@ -308,9 +260,6 @@ namespace SimpleInventory.Inputs
 
             private void UnregisterCallbacks(IDefaultActions instance)
             {
-                @Jump.started -= instance.OnJump;
-                @Jump.performed -= instance.OnJump;
-                @Jump.canceled -= instance.OnJump;
                 @Interact.started -= instance.OnInteract;
                 @Interact.performed -= instance.OnInteract;
                 @Interact.canceled -= instance.OnInteract;
@@ -339,7 +288,6 @@ namespace SimpleInventory.Inputs
         public DefaultActions @Default => new DefaultActions(this);
         public interface IDefaultActions
         {
-            void OnJump(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
             void OnMovement(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
