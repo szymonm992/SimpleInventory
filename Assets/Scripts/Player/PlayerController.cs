@@ -1,4 +1,6 @@
 using SimpleInventory.Inputs;
+using SimpleInventory.Inventory;
+using System;
 using UnityEngine;
 
 namespace SimpleInventory.Player
@@ -19,28 +21,26 @@ namespace SimpleInventory.Player
         [SerializeField] private float rotationSensitivity = 0.1f;
         [SerializeField] private new Rigidbody rigidbody;
         [SerializeField] private Collider playerCollider;
+        [SerializeField] private InventoryController inventoryController;
         [SerializeField] private Camera playerCamera;
         [SerializeField] private LayerMask groundMask;
 
         private IPlayerInputsProvider playerInputsProvider;
         private Vector2 viewAngles;
         private Vector3 movementInput;
+        private bool canMoveAndRotate;
 
-        public void ProcessMovement()
+        private void FixedUpdate()
         {
-            if (rigidbody == null || playerCollider == null)
+            CheckGrounded();
+
+            if (rigidbody == null || playerCollider == null || !canMoveAndRotate)
             {
                 return;
             }
 
             ProcessRotation(FetchRotation());
             ProcessMovement(GetInputVector());
-        }
-
-        private void FixedUpdate()
-        {
-            CheckGrounded();
-            ProcessMovement();
         }
 
         private void Update()
@@ -56,6 +56,17 @@ namespace SimpleInventory.Player
         private void Awake()
         {
             playerInputsProvider = new PlayerInputsProvider();
+            inventoryController.ToggleInventoryEvent += OnToggleInventory;
+        }
+
+        private void OnDestroy()
+        {
+            inventoryController.ToggleInventoryEvent -= OnToggleInventory;
+        }
+
+        private void OnToggleInventory(bool value)
+        {
+            canMoveAndRotate = !value;
         }
 
         private void CheckGrounded()

@@ -6,7 +6,6 @@ namespace SimpleInventory.Inventory
     {
         public string Name { get; }
         public string Description { get; }
-        public Texture2D Icon { get; }
-        public GameObject PhysicalPrefab { get; }
+        public Sprite Icon { get; }
     }
 }

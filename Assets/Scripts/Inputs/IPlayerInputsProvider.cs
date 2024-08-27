@@ -1,9 +1,15 @@
+using System;
 using UnityEngine;
 
 namespace SimpleInventory.Inputs
 {
     public interface IPlayerInputsProvider 
     {
+        /// <summary>
+        /// Dispatched when inventory key is pressed
+        /// </summary>
+        event Action InventoryButtonPressedEvent;
+
         /// <summary>
         /// Provides movement vector
         /// </summary>

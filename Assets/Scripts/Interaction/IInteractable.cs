@@ -5,7 +5,12 @@ namespace SimpleInventory.Interaction
         /// <summary>
         /// Used to determine whether detection is "Grab", "Use", etc...
         /// </summary>
-        string InteractionName { get; }
+        string InteractionActionName { get; }
+
+        /// <summary>
+        /// Used to present the name of the object
+        /// </summary>
+        string InteractionObjectName { get; }
 
         /// <summary>
         /// Contains interaction logic

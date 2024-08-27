@@ -2,7 +2,6 @@ using SimpleInventory.Inputs;
 using SimpleInventory.Interaction;
 using UnityEngine;
 using TMPro;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace SimpleInventory.Player
 {
@@ -34,7 +33,7 @@ namespace SimpleInventory.Player
                 return;
             }
 
-            if (playerInputsProvider.InventoryKey && currentInteractable != null)
+            if (playerInputsProvider.Interact && currentInteractable != null)
             {
                 currentInteractable.Interact();
                 SetInteractionTextState(false);
@@ -87,7 +86,7 @@ namespace SimpleInventory.Player
 
             if (newTextEnabledState && currentInteractable != null)
             {
-                interactionText.text = $"Press '{INTERACTION_KEY}' to {currentInteractable.InteractionName}";
+                interactionText.text = $"Press '{INTERACTION_KEY}' to {currentInteractable.InteractionActionName}";
             }
         }
 

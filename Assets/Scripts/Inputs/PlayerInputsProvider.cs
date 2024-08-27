@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,6 +6,8 @@ namespace SimpleInventory.Inputs
 {
     public class PlayerInputsProvider : IPlayerInputsProvider, InputActions.IDefaultActions
     {
+        public event Action InventoryButtonPressedEvent;
+
         public Vector2 Movement { get; private set; }
         public Vector2 MouseDelta { get; private set; }
         public bool Interact { get; private set; }
@@ -41,11 +44,6 @@ namespace SimpleInventory.Inputs
         {
             Interact = context.performed;
         } 
-        
-        public void OnInventoryKey(InputAction.CallbackContext context)
-        {
-            InventoryKey = context.performed;
-        }
 
         public void OnMovement(InputAction.CallbackContext context)
         {
@@ -55,6 +53,17 @@ namespace SimpleInventory.Inputs
         public void OnLook(InputAction.CallbackContext context)
         {
             MouseDelta = context.ReadValue<Vector2>();
+        }
+
+        public void OnInventory(InputAction.CallbackContext context)
+        {
+            InventoryKey = context.performed;
+
+            if (context.performed)
+            {
+                InventoryButtonPressedEvent?.Invoke();
+                Debug.Log("sdfsfsd");
+            }
         }
     }
 }

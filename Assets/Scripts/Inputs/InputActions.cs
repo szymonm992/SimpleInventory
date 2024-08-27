@@ -55,6 +55,15 @@ namespace SimpleInventory.Inputs
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""88451e6d-131d-4960-8e5c-0f627b25a268"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -115,30 +124,8 @@ namespace SimpleInventory.Inputs
                 },
                 {
                     ""name"": """",
-                    ""id"": ""15ab58d8-dd76-4172-84d6-7fa889e461b1"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""5f278f5b-de62-44a2-a714-1e6b63dca6bd"",
                     ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2aa08d07-e5d7-4e6f-a03c-0587e3063d29"",
-                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -156,6 +143,17 @@ namespace SimpleInventory.Inputs
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5e74552-171e-4a8e-99a4-9dae6978cb75"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -167,6 +165,7 @@ namespace SimpleInventory.Inputs
             m_Default_Interact = m_Default.FindAction("Interact", throwIfNotFound: true);
             m_Default_Movement = m_Default.FindAction("Movement", throwIfNotFound: true);
             m_Default_Look = m_Default.FindAction("Look", throwIfNotFound: true);
+            m_Default_Inventory = m_Default.FindAction("Inventory", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -231,6 +230,7 @@ namespace SimpleInventory.Inputs
         private readonly InputAction m_Default_Interact;
         private readonly InputAction m_Default_Movement;
         private readonly InputAction m_Default_Look;
+        private readonly InputAction m_Default_Inventory;
         public struct DefaultActions
         {
             private @InputActions m_Wrapper;
@@ -238,6 +238,7 @@ namespace SimpleInventory.Inputs
             public InputAction @Interact => m_Wrapper.m_Default_Interact;
             public InputAction @Movement => m_Wrapper.m_Default_Movement;
             public InputAction @Look => m_Wrapper.m_Default_Look;
+            public InputAction @Inventory => m_Wrapper.m_Default_Inventory;
             public InputActionMap Get() { return m_Wrapper.m_Default; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -256,6 +257,9 @@ namespace SimpleInventory.Inputs
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
 
             private void UnregisterCallbacks(IDefaultActions instance)
@@ -269,6 +273,9 @@ namespace SimpleInventory.Inputs
                 @Look.started -= instance.OnLook;
                 @Look.performed -= instance.OnLook;
                 @Look.canceled -= instance.OnLook;
+                @Inventory.started -= instance.OnInventory;
+                @Inventory.performed -= instance.OnInventory;
+                @Inventory.canceled -= instance.OnInventory;
             }
 
             public void RemoveCallbacks(IDefaultActions instance)
@@ -291,6 +298,7 @@ namespace SimpleInventory.Inputs
             void OnInteract(InputAction.CallbackContext context);
             void OnMovement(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
+            void OnInventory(InputAction.CallbackContext context);
         }
     }
 }

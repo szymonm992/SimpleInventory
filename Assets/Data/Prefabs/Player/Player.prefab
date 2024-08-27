@@ -302,7 +302,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8863125746042981107}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -358,6 +358,7 @@ MonoBehaviour:
   rotationSensitivity: 0.1
   rigidbody: {fileID: 6830161897924722806}
   playerCollider: {fileID: 8288502524801844179}
+  inventoryController: {fileID: 5325690200214785195}
   playerCamera: {fileID: 4369194494427002935}
   groundMask:
     serializedVersion: 2
@@ -396,5 +397,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a6d54bd2cc55348be6f64016957374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventorySize: 20
   inventorySpawnPoint: {fileID: 7322227495113213698}
+  slotPrefab: {fileID: 6446076664299840249, guid: 2d0b8f9cca78853428f18ce61e55d7a1,
+    type: 3}
+  itemsDatabase: {fileID: 11400000, guid: eb86fd3e4884a0f439ea988e480eb3d7, type: 2}
+  slotsAmount: 30
+  inventoryGroup: {fileID: 0}
+  inventoryLayoutGroup: {fileID: 0}

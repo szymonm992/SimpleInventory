@@ -1,19 +1,12 @@
-using SimpleInventory.Interaction;
 using UnityEngine;
 
 namespace SimpleInventory.Inventory
 {
-    public class GrabbableItem : MonoBehaviour, IInteractable
+    [CreateAssetMenu(fileName = "GrabbableItem", menuName = "Inventory/GrabbableItem", order = 1)]
+    public class GrabbableItem : ItemBase, IGrabableItem
     {
-        public string InteractionName => interactionName;
+        public GameObject PhysicalObjectPrefab => physicalObjectPrefab;
 
-        [SerializeField] private string interactionName = "Grab";
-
-        public void Interact()
-        {
-            Debug.Log("interact");
-            //TODO: Can be easily replaced with proper pooling system 
-            Destroy(this);
-        }
+        [SerializeField] private GameObject physicalObjectPrefab;
     }
 }
