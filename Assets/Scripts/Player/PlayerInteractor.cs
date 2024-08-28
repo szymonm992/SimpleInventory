@@ -2,48 +2,42 @@ using SimpleInventory.Inputs;
 using SimpleInventory.Interaction;
 using UnityEngine;
 using TMPro;
+using Zenject;
+using System;
 
 namespace SimpleInventory.Player
 {
-    public class PlayerInteractor : MonoBehaviour
+    public class PlayerInteractor : MonoBehaviour, IInitializable, IDisposable, IFixedTickable
     {
+        //TODO: This should be refactored
         private const string INTERACTION_KEY = "E";
 
-        [SerializeField] private Camera mainCamera;
+        [Inject] private readonly IPlayerInputsProvider playerInputsProvider;
+        [Inject(Id = PlayerInstaller.PLAYER_CAMERA_ID)] private readonly Camera playerCamera;
+
         [SerializeField] private float interactionMaxDistance = 10f;
         [SerializeField] private LayerMask rayMask;
         [SerializeField] private LayerMask interactableLayer;
         [SerializeField] private TextMeshProUGUI interactionText;
         [SerializeField] private CanvasGroup interactionCanvasGroup;
         
-        private bool previouslyDetectsInteractable = false;
         private bool detectsInteractable = false;
-        private IPlayerInputsProvider playerInputsProvider;
         private IInteractable currentInteractable;
 
-        private void Awake()
+        public void Initialize()
         {
             SetInteractionTextState(false);
+            playerInputsProvider.InteractButtonPressedEvent += OnInteractButtonPressed;
         }
 
-        private void Update()
+        public void Dispose()
         {
-            if (playerInputsProvider == null)
-            {
-                return;
-            }
-
-            if (playerInputsProvider.Interact && currentInteractable != null)
-            {
-                currentInteractable.Interact();
-                SetInteractionTextState(false);
-                currentInteractable = null;
-            }
+            playerInputsProvider.InteractButtonPressedEvent -= OnInteractButtonPressed;
         }
 
-        private void FixedUpdate()
+        public void FixedTick()
         {
-            if (mainCamera == null)
+            if (playerCamera == null)
             {
                 return;
             }
@@ -51,9 +45,18 @@ namespace SimpleInventory.Player
             ProcessInteractions();
         }
 
+        private void OnInteractButtonPressed()
+        {
+            if (currentInteractable != null)
+            {
+                currentInteractable.Interact();
+                currentInteractable = null;
+            }
+        }
+
         private void ProcessInteractions()
         {
-            var detectionRay = mainCamera.ScreenPointToRay(new (Screen.width * 0.5f, Screen.height * 0.5f, 0f));
+            var detectionRay = playerCamera.ScreenPointToRay(new (Screen.width * 0.5f, Screen.height * 0.5f, 0f));
             SetDetectedState(IsDetectingInteractable(detectionRay, out currentInteractable));
         }
 
@@ -71,9 +74,8 @@ namespace SimpleInventory.Player
 
         private void SetDetectedState(bool detectionState)
         {
-            if (previouslyDetectsInteractable != detectionState)
+            if (detectsInteractable != detectionState)
             {
-                previouslyDetectsInteractable = detectsInteractable;
                 detectsInteractable = detectionState;
                 SetInteractionTextState(detectionState);
             }

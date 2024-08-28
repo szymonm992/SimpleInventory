@@ -11,6 +11,11 @@ namespace SimpleInventory.Inputs
         event Action InventoryButtonPressedEvent;
 
         /// <summary>
+        /// Dispatched when interact key is pressed
+        /// </summary>
+        event Action InteractButtonPressedEvent;
+
+        /// <summary>
         /// Provides movement vector
         /// </summary>
         Vector2 Movement { get; }

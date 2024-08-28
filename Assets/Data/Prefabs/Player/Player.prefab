@@ -283,10 +283,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 26160474607112704}
+  - component: {fileID: 1346047512839450831}
+  - component: {fileID: 3854557622672774515}
   - component: {fileID: 6830161897924722806}
   - component: {fileID: 1408417565545724147}
   - component: {fileID: 4863385299105852032}
-  - component: {fileID: 5325690200214785195}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -312,6 +313,37 @@ Transform:
   - {fileID: 7322227495113213698}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1346047512839450831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8863125746042981107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 3854557622672774515}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}
+--- !u!114 &3854557622672774515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8863125746042981107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 856db9a0806e10148b856087ea53dd76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 4369194494427002935}
 --- !u!54 &6830161897924722806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -358,11 +390,9 @@ MonoBehaviour:
   rotationSensitivity: 0.1
   rigidbody: {fileID: 6830161897924722806}
   playerCollider: {fileID: 8288502524801844179}
-  inventoryController: {fileID: 5325690200214785195}
-  playerCamera: {fileID: 4369194494427002935}
   groundMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 65
 --- !u!114 &4863385299105852032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,7 +405,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57612dd67f974f94a8308f5ec4c11634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 4369194494427002935}
   interactionMaxDistance: 10
   rayMask:
     serializedVersion: 2
@@ -385,22 +414,3 @@ MonoBehaviour:
     m_Bits: 64
   interactionText: {fileID: 0}
   interactionCanvasGroup: {fileID: 0}
---- !u!114 &5325690200214785195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8863125746042981107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66a6d54bd2cc55348be6f64016957374, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventorySpawnPoint: {fileID: 7322227495113213698}
-  slotPrefab: {fileID: 6446076664299840249, guid: 2d0b8f9cca78853428f18ce61e55d7a1,
-    type: 3}
-  itemsDatabase: {fileID: 11400000, guid: eb86fd3e4884a0f439ea988e480eb3d7, type: 2}
-  slotsAmount: 30
-  inventoryGroup: {fileID: 0}
-  inventoryLayoutGroup: {fileID: 0}

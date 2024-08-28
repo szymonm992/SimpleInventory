@@ -2,27 +2,32 @@ using SimpleInventory.Inputs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Zenject;
 
 namespace SimpleInventory.Inventory
 {
-    public class InventoryController : MonoBehaviour
+    public class InventoryController : MonoBehaviour, IInitializable, IDisposable
     {
         public event Action<bool> ToggleInventoryEvent;
+
+        public IItem EmptyItem => itemsDatabase.Empty;
+
+        [Inject] private readonly ItemsDatabase itemsDatabase;
+        [Inject] private readonly IPlayerInputsProvider playerInputsProvider;
 
         [Header("Physical")]
         [SerializeField] private Transform inventorySpawnPoint;
 
         [Header("GUI")]
         [SerializeField] private SlotController slotPrefab;
-        [SerializeField] private ItemsDatabase itemsDatabase;
         [SerializeField] private int slotsAmount = 0;
         [SerializeField] private CanvasGroup inventoryGroup;
         [SerializeField] private GridLayoutGroup inventoryLayoutGroup;
 
         private readonly List<Slot> slots = new ();
         private bool isInventoryEnabled = true;
-        private IPlayerInputsProvider playerInputsProvider;
 
         public void TryAddItem(IItem item, int amount)
         {
@@ -45,22 +50,56 @@ namespace SimpleInventory.Inventory
 
         public void RemoveItemFromSlot(int slotIndex)
         {
-            if (!slots[slotIndex].IsEmpty())
+            if (!IsSlotEmpty(slotIndex))
             {
-                if (slots[slotIndex] is IGrabableItem grabable)
+                if (slots[slotIndex].Item is IGrabableItem grabable)
                 {
-                    SpawnGrabbableItem(grabable);
+                    for (int i = 0; i < slots[slotIndex].ItemsAmount; i++)
+                    {
+                        SpawnGrabbableItem(grabable);
+                    }
                 }
-                
-                slots[slotIndex].Clean();
+
+                CleanSlot(slotIndex);
             }
         }
 
-        private void SpawnGrabbableItem(IGrabableItem grabableItem)
+        public void Initialize()
+        {
+            InitializeInternal();
+        }
+
+        public void Dispose()
+        {
+            foreach (var slot in slots)
+            {
+                slot.Dispose();
+            }
+
+            playerInputsProvider.InventoryButtonPressedEvent -= OnInventoryButtonPressed;
+        }
+
+        public void PointerClick(int slotIndex, PointerEventData pointerData)
+        {
+            if (pointerData.button == PointerEventData.InputButton.Right)
+            {
+                TryDropItem(slotIndex);
+            }
+        }
+
+        private void SpawnGrabbableItem(IGrabableItem grabbableItem)
         {
             //TODO: Can be replaced with proper pooling system
-            var newSpawnedItem = Instantiate(grabableItem.PhysicalObjectPrefab, inventorySpawnPoint.position, inventorySpawnPoint.rotation);
-            newSpawnedItem.name = grabableItem.Name;
+            var newSpawnedItem = Instantiate(grabbableItem.PhysicalObjectPrefab, inventorySpawnPoint.position, inventorySpawnPoint.rotation);
+            newSpawnedItem.name = grabbableItem.Name;
+        }
+
+        private void TryDropItem(int slotIndex)
+        {
+            if (!IsSlotEmpty(slotIndex))
+            {
+                RemoveItemFromSlot(slotIndex);
+            }
         }
 
         private bool TryGetItemInInventory(IItem item, out int foundIndex)
@@ -85,7 +124,7 @@ namespace SimpleInventory.Inventory
 
             for (int i = 0; i < slots.Count; i++)
             {
-                if (slots[i].IsEmpty())
+                if (IsSlotEmpty(i))
                 {
                     foundIndex = i;
                     return true;
@@ -95,7 +134,7 @@ namespace SimpleInventory.Inventory
             return false;
         }
 
-        private void Initialize()
+        private void InitializeInternal()
         {
             CreateInventory();
             SetInventoryPanelEnabled(false);
@@ -108,11 +147,6 @@ namespace SimpleInventory.Inventory
             SetInventoryPanelEnabled(!isInventoryEnabled);
         }
 
-        private void Awake()
-        {
-            Initialize();
-        }
-
         private void CreateInventory()
         {
             for (int i = 0; i < slotsAmount; i++)
@@ -121,7 +155,7 @@ namespace SimpleInventory.Inventory
                 newSlotPrefab.transform.SetParent(inventoryLayoutGroup.transform, false);
 
                 var newSlot = new Slot(itemsDatabase.Empty, 0);
-                newSlotPrefab.Initialize(newSlot);
+                newSlotPrefab.Initialize(i, newSlot, this);
 
                 slots.Add(newSlot);
             }
@@ -137,14 +171,14 @@ namespace SimpleInventory.Inventory
             }
         }
 
-        private void OnDestroy()
+        private bool IsSlotEmpty(int index)
         {
-            foreach (var slot in slots)
-            {
-                slot.Dispose();
-            }
+            return slots[index].Item == itemsDatabase.Empty;
+        }
 
-            playerInputsProvider.InventoryButtonPressedEvent -= OnInventoryButtonPressed;
+        private void CleanSlot(int index)
+        {
+            slots[index].SetItem(itemsDatabase.Empty, 0);
         }
     }
 }

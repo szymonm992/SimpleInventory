@@ -4,8 +4,9 @@ namespace SimpleInventory.Inventory
 {
     public class Slot 
     {
-        //TODO: We could use delegates instead of this
-        public event Action<IItem, int> ItemChangedEvent;
+        public delegate void ItemChangedDelegate(IItem newItem, int newAmount); 
+   
+        public event ItemChangedDelegate ItemChangedEvent;
         public event Action<int> AmountChangedEvent;
         public event Action DisposeEvent;
 
@@ -16,11 +17,6 @@ namespace SimpleInventory.Inventory
         {
             this.Item = item;
             this.ItemsAmount = amount;
-        }
-
-        public bool IsEmpty()
-        {
-            return Item == null && ItemsAmount == 0;
         }
 
         public void SetItem(IItem item, int amount)
@@ -36,14 +32,6 @@ namespace SimpleInventory.Inventory
             this.ItemsAmount += amountToAdd;
 
             AmountChangedEvent?.Invoke(ItemsAmount);
-        }
-
-        public void Clean()
-        {
-            this.Item = null;
-            this.ItemsAmount = 0;
-
-            ItemChangedEvent?.Invoke(null, 0);
         }
 
         public void Dispose()

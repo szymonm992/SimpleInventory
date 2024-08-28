@@ -1,21 +1,29 @@
 using SimpleInventory.Interaction;
 using UnityEngine;
+using Zenject;
 
 namespace SimpleInventory.Inventory
 {
-    public class PhysicalItem : MonoBehaviour, IInteractable
+    public class PhysicalItem : InteractableBase
     {
-        public string InteractionActionName => interactionName;
-        public string InteractionObjectName => itemDefinition.Name;
-
+        public override string InteractionActionName => interactionName;
+        public override string InteractionObjectName => itemDefinition.Name;
+       
         [SerializeField] private string interactionName = "Grab";
         [SerializeField] private ItemBase itemDefinition;
 
-        public void Interact()
+        private InventoryController inventoryController;
+
+        public override void Interact()
         {
-            Debug.Log("interact");
-            //TODO: This can be easily replaced with proper pooling system 
-            Destroy(this);
+            inventoryController.TryAddItem(itemDefinition, 1);
+            Destroy(this.gameObject);
+        }
+
+        protected override void Initialize()
+        {
+            //TODO: Should be refactored with proper spawning system (kind of complicated to spawn dynamic and make work objects in Zenject)
+            inventoryController = FindObjectOfType<InventoryController>();
         }
     }
 }

@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionName: Grab
+  itemDefinition: {fileID: 11400000, guid: 49df58b0efe16e14f98104eb142eccc9, type: 2}
 --- !u!1 &1342318077627082059
 GameObject:
   m_ObjectHideFlags: 0

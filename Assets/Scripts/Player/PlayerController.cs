@@ -2,10 +2,11 @@ using SimpleInventory.Inputs;
 using SimpleInventory.Inventory;
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace SimpleInventory.Player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IInitializable, IDisposable, ITickable, IFixedTickable
     {
         private const float COLLISION_ERROR_MARGIN = 0.01f;
         private const float GROUND_CHECK_HEIGHT = 0.001f;
@@ -14,6 +15,10 @@ namespace SimpleInventory.Player
 
         public bool IsGrounded { get; private set; } = false;
 
+        [Inject] private readonly InventoryController inventoryController;
+        [Inject] private readonly CursorController cursorController;
+        [Inject] private readonly IPlayerInputsProvider playerInputsProvider;
+        [Inject(Id = PlayerInstaller.PLAYER_CAMERA_ID)] private readonly Camera playerCamera;
         [SerializeField] private float movementSpeed = 10.0f;
         [SerializeField] private float acceleration = 10.0f;
         [SerializeField] private float minRotationX = -89f;
@@ -21,16 +26,24 @@ namespace SimpleInventory.Player
         [SerializeField] private float rotationSensitivity = 0.1f;
         [SerializeField] private new Rigidbody rigidbody;
         [SerializeField] private Collider playerCollider;
-        [SerializeField] private InventoryController inventoryController;
-        [SerializeField] private Camera playerCamera;
         [SerializeField] private LayerMask groundMask;
 
-        private IPlayerInputsProvider playerInputsProvider;
         private Vector2 viewAngles;
         private Vector3 movementInput;
         private bool canMoveAndRotate;
 
-        private void FixedUpdate()
+        public void Initialize()
+        {
+            canMoveAndRotate = true;
+            inventoryController.ToggleInventoryEvent += OnToggleInventory;
+        }
+
+        public void Dispose()
+        {
+            inventoryController.ToggleInventoryEvent -= OnToggleInventory;
+        }
+
+        public void FixedTick()
         {
             CheckGrounded();
 
@@ -43,7 +56,7 @@ namespace SimpleInventory.Player
             ProcessMovement(GetInputVector());
         }
 
-        private void Update()
+        public void Tick()
         {
             if (playerInputsProvider == null)
             {
@@ -53,20 +66,11 @@ namespace SimpleInventory.Player
             movementInput = (Vector3.right * playerInputsProvider.Movement.x) + (Vector3.forward * playerInputsProvider.Movement.y);
         }
 
-        private void Awake()
+        private void OnToggleInventory(bool isInventoryEnabled)
         {
-            playerInputsProvider = new PlayerInputsProvider();
-            inventoryController.ToggleInventoryEvent += OnToggleInventory;
-        }
-
-        private void OnDestroy()
-        {
-            inventoryController.ToggleInventoryEvent -= OnToggleInventory;
-        }
-
-        private void OnToggleInventory(bool value)
-        {
-            canMoveAndRotate = !value;
+            canMoveAndRotate = !isInventoryEnabled;
+            cursorController.SetCursorLocked(isInventoryEnabled ? CursorLockMode.None : CursorLockMode.Locked);
+            cursorController.SetCursorVisible(isInventoryEnabled);
         }
 
         private void CheckGrounded()

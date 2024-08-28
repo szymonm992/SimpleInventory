@@ -158,6 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionName: Grab
+  itemDefinition: {fileID: 11400000, guid: a936199a9f2816147a850bbd78b16cc4, type: 2}
 --- !u!64 &2312141634047045177
 MeshCollider:
   m_ObjectHideFlags: 0

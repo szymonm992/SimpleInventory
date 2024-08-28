@@ -7,6 +7,7 @@ namespace SimpleInventory.Inputs
     public class PlayerInputsProvider : IPlayerInputsProvider, InputActions.IDefaultActions
     {
         public event Action InventoryButtonPressedEvent;
+        public event Action InteractButtonPressedEvent;
 
         public Vector2 Movement { get; private set; }
         public Vector2 MouseDelta { get; private set; }
@@ -17,7 +18,7 @@ namespace SimpleInventory.Inputs
 
         public PlayerInputsProvider()
         {
-            inputActions = new();
+            inputActions = new ();
             inputActions.Default.SetCallbacks(this);
             SetInputsEnabled(true);
         }
@@ -43,6 +44,11 @@ namespace SimpleInventory.Inputs
         public void OnInteract(InputAction.CallbackContext context)
         {
             Interact = context.performed;
+
+            if (context.performed)
+            {
+                InteractButtonPressedEvent?.Invoke();
+            }
         } 
 
         public void OnMovement(InputAction.CallbackContext context)
@@ -62,7 +68,6 @@ namespace SimpleInventory.Inputs
             if (context.performed)
             {
                 InventoryButtonPressedEvent?.Invoke();
-                Debug.Log("sdfsfsd");
             }
         }
     }

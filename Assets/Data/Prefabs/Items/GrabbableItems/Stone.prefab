@@ -179,3 +179,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionName: Grab
+  itemDefinition: {fileID: 11400000, guid: c94bd8c18f888254da3898e580264aec, type: 2}

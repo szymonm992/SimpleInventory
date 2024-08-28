@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,10 +15,15 @@ namespace SimpleInventory.Inventory
 
         private Slot slot;
         private bool isHovering;
+        private int slotIndex;
+        private InventoryController inventoryController;
 
-        public void Initialize(Slot slot)
+        public void Initialize(int index, Slot slot, InventoryController inventoryController)
         {
+            this.slotIndex = index;
             this.slot = slot;
+            this.inventoryController = inventoryController;
+
             slot.ItemChangedEvent += OnItemChanged;
             slot.AmountChangedEvent += OnAmountChanged;
             slot.DisposeEvent += OnDispose;
@@ -27,10 +31,7 @@ namespace SimpleInventory.Inventory
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                Debug.Log("Context menu open");
-            }
+            inventoryController.PointerClick(slotIndex, eventData);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -52,9 +53,9 @@ namespace SimpleInventory.Inventory
 
         private void Clear()
         {
-            iconImage.color = new(Color.white.r, Color.white.g, Color.white.b, 0);
+            iconImage.color = new (Color.white.r, Color.white.g, Color.white.b, 0);
             iconImage.sprite = null;
-            amountText.text = "";
+            amountText.text = string.Empty;
         }
 
         private void OnAmountChanged(int newAmount)
@@ -64,7 +65,7 @@ namespace SimpleInventory.Inventory
 
         private void OnItemChanged(IItem item, int itemAmount)
         {
-            if (item == null)
+            if (item == inventoryController.EmptyItem)
             {
                 Clear();
             }
