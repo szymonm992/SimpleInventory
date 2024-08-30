@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d4dd763c914964293995e31d649135, type: 3}
+  m_Name: StoneAxe
+  m_EditorClassIdentifier: 
+  craftChance: 40
+  craftTarget: {fileID: 11400000, guid: 5eeb94698dd857e469ca66fce9f14d88, type: 2}
+  ingredients:
+  - item: {fileID: 11400000, guid: 614b254110e5e2e469c7d1fb27686efd, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: c94bd8c18f888254da3898e580264aec, type: 2}
+    amount: 1

@@ -1,5 +1,3 @@
-using SimpleInventory.Inputs;
-using SimpleInventory.Inventory;
 using UnityEngine;
 using Zenject;
 

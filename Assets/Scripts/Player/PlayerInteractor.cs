@@ -88,7 +88,7 @@ namespace SimpleInventory.Player
 
             if (newTextEnabledState && currentInteractable != null)
             {
-                interactionText.text = $"Press '{INTERACTION_KEY}' to {currentInteractable.InteractionActionName}";
+                interactionText.text = $"Press '{INTERACTION_KEY}' to {currentInteractable.InteractionActionName} the {currentInteractable.InteractionObjectName}";
             }
         }
 

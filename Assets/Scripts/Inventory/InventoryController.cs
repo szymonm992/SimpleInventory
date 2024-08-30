@@ -11,6 +11,7 @@ namespace SimpleInventory.Inventory
     public class InventoryController : MonoBehaviour, IInitializable, IDisposable
     {
         public event Action<bool> ToggleInventoryEvent;
+        public event Action<bool> ToggleCraftingEvent;
 
         public IItem EmptyItem => itemsDatabase.Empty;
 
@@ -21,13 +22,20 @@ namespace SimpleInventory.Inventory
         [SerializeField] private Transform inventorySpawnPoint;
 
         [Header("GUI")]
-        [SerializeField] private SlotController slotPrefab;
         [SerializeField] private int slotsAmount = 0;
+        [SerializeField] private SlotController slotPrefab;
+        [SerializeField] private CraftSlotController craftSlotPrefab;
+        [SerializeField] private Button craftingButton;
         [SerializeField] private CanvasGroup inventoryGroup;
+        [SerializeField] private CanvasGroup craftingGroup;
+        [SerializeField] private RectTransform craftingSlotsParent;
         [SerializeField] private GridLayoutGroup inventoryLayoutGroup;
 
         private readonly List<Slot> slots = new ();
+        private readonly List<Recipe> currentCraftable = new ();
+
         private bool isInventoryEnabled = true;
+        private bool isCraftingEnabled = true;
 
         public void TryAddItem(IItem item, int amount)
         {
@@ -46,6 +54,8 @@ namespace SimpleInventory.Inventory
                     Debug.LogError($"Inventory is full and item {item.Name} cannot be added!");
                 }
             }
+
+            UpdateCrafting();
         }
 
         public void RemoveItemFromSlot(int slotIndex)
@@ -54,6 +64,7 @@ namespace SimpleInventory.Inventory
             {
                 if (slots[slotIndex].Item is IGrabableItem grabable)
                 {
+                    //TODO: Spawning multiple objects that use physics should consider multiple positions/offsetting spawn position by size of spawned object
                     for (int i = 0; i < slots[slotIndex].ItemsAmount; i++)
                     {
                         SpawnGrabbableItem(grabable);
@@ -61,6 +72,7 @@ namespace SimpleInventory.Inventory
                 }
 
                 CleanSlot(slotIndex);
+                UpdateCrafting();
             }
         }
 
@@ -77,10 +89,12 @@ namespace SimpleInventory.Inventory
             }
 
             playerInputsProvider.InventoryButtonPressedEvent -= OnInventoryButtonPressed;
+            craftingButton.onClick.RemoveAllListeners();
         }
 
         public void PointerClick(int slotIndex, PointerEventData pointerData)
         {
+            //TODO: Could be replaced with displaying context menu or options menu instead of just dropping on click
             if (pointerData.button == PointerEventData.InputButton.Right)
             {
                 TryDropItem(slotIndex);
@@ -99,6 +113,30 @@ namespace SimpleInventory.Inventory
             if (!IsSlotEmpty(slotIndex))
             {
                 RemoveItemFromSlot(slotIndex);
+            }
+        }
+
+        private void UpdateCrafting()
+        {
+            currentCraftable.Clear();
+            var currentIngredients = new Dictionary<IItem, int>();
+
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (!IsSlotEmpty(i))
+                {
+                    currentIngredients.Add(slots[i].Item, slots[i].ItemsAmount);
+                }
+            }
+
+            foreach (var currentRecipe in itemsDatabase.CraftingRecipes)
+            {
+                Debug.Log("4");
+                if (currentRecipe.IsCraftable(currentIngredients))
+                {
+                    Debug.Log("5");
+                    currentCraftable.Add(currentRecipe);
+                }
             }
         }
 
@@ -138,8 +176,16 @@ namespace SimpleInventory.Inventory
         {
             CreateInventory();
             SetInventoryPanelEnabled(false);
+            SetCraftingPanelEnabled(false);
 
+            craftingButton.onClick.AddListener(OnOpenCraftingWindow);
             playerInputsProvider.InventoryButtonPressedEvent += OnInventoryButtonPressed;
+        }
+
+        private void OnOpenCraftingWindow()
+        {
+            CreateCraftingWindow();
+            SetCraftingPanelEnabled(true);
         }
 
         private void OnInventoryButtonPressed()
@@ -161,16 +207,52 @@ namespace SimpleInventory.Inventory
             }
         }
 
+        private void CreateCraftingWindow()
+        {
+            if (craftingSlotsParent.childCount > 0)
+            {
+                foreach (Transform child in craftingSlotsParent.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            foreach (var recipe in currentCraftable)
+            {
+                var newRecipePrefab = Instantiate(craftSlotPrefab, craftingSlotsParent.transform);
+                newRecipePrefab.transform.SetParent(craftingSlotsParent.transform, false);
+
+                newRecipePrefab.Initialize(recipe, this);
+            }
+        }
+
         private void SetInventoryPanelEnabled(bool newState)
         {
             if (isInventoryEnabled != newState)
             {
                 isInventoryEnabled = newState;
                 inventoryGroup.alpha = newState ? 1f : 0f;
+                inventoryGroup.blocksRaycasts = newState;
                 ToggleInventoryEvent?.Invoke(newState);
+
+                if (!newState)
+                {
+                    SetCraftingPanelEnabled(false);
+                }
             }
         }
 
+        private void SetCraftingPanelEnabled(bool newState)
+        {
+            if (isCraftingEnabled != newState)
+            {
+                isCraftingEnabled = newState;
+                craftingGroup.alpha = newState ? 1f : 0f;
+                craftingGroup.blocksRaycasts = newState;
+                ToggleCraftingEvent?.Invoke(newState);
+            }
+        }
+
+        //TODO: These two methods should be implemented internally by Slot class
         private bool IsSlotEmpty(int index)
         {
             return slots[index].Item == itemsDatabase.Empty;

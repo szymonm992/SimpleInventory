@@ -19,6 +19,7 @@ namespace SimpleInventory.Player
         [Inject] private readonly CursorController cursorController;
         [Inject] private readonly IPlayerInputsProvider playerInputsProvider;
         [Inject(Id = PlayerInstaller.PLAYER_CAMERA_ID)] private readonly Camera playerCamera;
+
         [SerializeField] private float movementSpeed = 10.0f;
         [SerializeField] private float acceleration = 10.0f;
         [SerializeField] private float minRotationX = -89f;
@@ -117,10 +118,10 @@ namespace SimpleInventory.Player
         private void ProcessRotation(Vector2 rotation)
         {
             viewAngles += rotation;
-            viewAngles.x = Mathf.Clamp(Mathf.DeltaAngle(0, viewAngles.x), minRotationX, maxRotationX);
+            viewAngles.x = Mathf.Clamp(Mathf.DeltaAngle(0f, viewAngles.x), minRotationX, maxRotationX);
 
-            playerCamera.transform.localRotation = Quaternion.Euler(new(viewAngles.x, 0, 0));
-            rigidbody.MoveRotation(Quaternion.Euler(new(0, viewAngles.y, 0)));
+            playerCamera.transform.localRotation = Quaternion.Euler(new(viewAngles.x, 0f, 0f));
+            rigidbody.MoveRotation(Quaternion.Euler(new(0f, viewAngles.y, 0f)));
         }
 
         #if UNITY_EDITOR

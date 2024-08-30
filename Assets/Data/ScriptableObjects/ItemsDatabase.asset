@@ -20,4 +20,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a936199a9f2816147a850bbd78b16cc4, type: 2}
   - {fileID: 11400000, guid: 614b254110e5e2e469c7d1fb27686efd, type: 2}
   - {fileID: 11400000, guid: c94bd8c18f888254da3898e580264aec, type: 2}
+  recipes:
+  - {fileID: 11400000, guid: 9facf104e17ca83478cf232a48bea7ae, type: 2}
+  - {fileID: 11400000, guid: 043a7b440a0033f44972ffdcfa81cbd0, type: 2}
+  - {fileID: 11400000, guid: 799ff0b02f4be1a42bbb3b5710598b0b, type: 2}
+  - {fileID: 11400000, guid: 66e1416bdc1a6a441b3575458ed6445e, type: 2}
   emptyItem: {fileID: 11400000, guid: d0e458431ab46e647ad6db2ee8b4dc47, type: 2}
