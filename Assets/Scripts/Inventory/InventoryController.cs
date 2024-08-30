@@ -126,7 +126,16 @@ namespace SimpleInventory.Inventory
                         SubstractItemAmount(removal.Key, removal.Value.Amount);
                     }
 
-                    TryAddItem(recipe.CraftTarget, 1);
+                    int randomNumber = UnityEngine.Random.Range(0, 100);
+                    if (randomNumber > recipe.CraftChance)
+                    {
+                        Debug.Log("Craft proccess successful, but craft itse;f failed due to insufficient chance!");
+                    }
+                    else
+                    {
+                        TryAddItem(recipe.CraftTarget, 1);
+                    }
+                    
                     SetCraftingPanelEnabled(false);
                     return true;
                 }
