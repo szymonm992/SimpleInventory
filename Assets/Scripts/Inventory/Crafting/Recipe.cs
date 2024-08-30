@@ -18,8 +18,6 @@ namespace SimpleInventory.Inventory
 
         public bool IsCraftable(Dictionary<IItem, int> inventoryIngredients)
         {
-            Debug.Log(inventoryIngredients.Count);
-
             if (inventoryIngredients.Any())
             {
                 foreach (var requiredIngredient in ingredients)
@@ -29,7 +27,6 @@ namespace SimpleInventory.Inventory
                         return false;
                     }
                 }
-                
             }
 
             return true;

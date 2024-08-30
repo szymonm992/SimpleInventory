@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using SimpleInventory.GUI;
+using UnityEngine.EventSystems;
 
 namespace SimpleInventory.Inventory
 {
@@ -20,6 +21,16 @@ namespace SimpleInventory.Inventory
             this.inventoryController = inventoryController;
 
             UpdateVisuals();
+        }
+
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            base.OnPointerClick(eventData);
+
+            if (!inventoryController.TryCraft(recipe))
+            {
+                Debug.Log("Craft failed!");
+            }
         }
 
         private void UpdateVisuals()

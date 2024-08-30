@@ -58,7 +58,7 @@ namespace SimpleInventory.Inventory
             UpdateCrafting();
         }
 
-        public void RemoveItemFromSlot(int slotIndex)
+        public void DropItemFromSlot(int slotIndex)
         {
             if (!IsSlotEmpty(slotIndex))
             {
@@ -74,6 +74,69 @@ namespace SimpleInventory.Inventory
                 CleanSlot(slotIndex);
                 UpdateCrafting();
             }
+        }
+
+        public void SubstractItemAmount(int slotIndex, int amount)
+        {
+            if (!IsSlotEmpty(slotIndex))
+            {
+                if (slots[slotIndex].ItemsAmount > amount)
+                {
+                    slots[slotIndex].AddAmount(-amount);
+                }
+                else
+                {
+                    CleanSlot(slotIndex);
+                }
+
+                UpdateCrafting();
+            }
+        }
+
+        public bool TryCraft(Recipe recipe)
+        {
+            //TODO: This is a simple implementation of double (secondary) valid-check
+            var removalPairs = new Dictionary<int, IngredientPair>();
+
+            foreach (var recipeItem in recipe.Ingredients)
+            {
+                if (TryGetItemInInventory(recipeItem.Item, out int foundIndex))
+                {
+                    if (slots[foundIndex].ItemsAmount >= recipeItem.Amount)
+                    {
+                        removalPairs.Add(foundIndex, recipeItem);
+                    }
+                    else
+                    {
+                        Debug.Log("Insufficient amount of item!");
+                    }
+                }
+                else
+                {
+                    Debug.Log("No item found in ivnentory");
+                }
+            }
+
+            if (removalPairs.Count == recipe.Ingredients.Length)
+            {
+                if (TryFindFirstEmptySlot(out _))
+                {
+                    foreach (var removal in removalPairs)
+                    {
+                        SubstractItemAmount(removal.Key, removal.Value.Amount);
+                    }
+
+                    TryAddItem(recipe.CraftTarget, 1);
+                    SetCraftingPanelEnabled(false);
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("No space in inventory found to craft item");
+                }
+            }
+
+            return false;
         }
 
         public void Initialize()
@@ -112,7 +175,7 @@ namespace SimpleInventory.Inventory
         {
             if (!IsSlotEmpty(slotIndex))
             {
-                RemoveItemFromSlot(slotIndex);
+                DropItemFromSlot(slotIndex);
             }
         }
 
@@ -131,10 +194,8 @@ namespace SimpleInventory.Inventory
 
             foreach (var currentRecipe in itemsDatabase.CraftingRecipes)
             {
-                Debug.Log("4");
                 if (currentRecipe.IsCraftable(currentIngredients))
                 {
-                    Debug.Log("5");
                     currentCraftable.Add(currentRecipe);
                 }
             }
